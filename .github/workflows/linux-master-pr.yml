@@ -76,13 +76,14 @@ jobs:
       run: cat /proc/cpuinfo
     - name: Running benchmarks
       run: |
-        mkdir out  
-        for exec in $(find . -type f -perm -u+x); do $exec --benchmark_output=out/$(basename $exec).json $BENCH_SETTINGS ; done
-      working-directory: ${GITHUB_WORKSPACE}/ispc-trunk-linux/benchmarks/
+        mkdir out
+        export LD_LIBRARY_PATH=../lib
+        for exec in $(find . -type f -perm -u+x); do $exec --benchmark_out=out/$(basename $exec).json $BENCH_SETTINGS ; done
+      working-directory: ispc-trunk-linux/benchmarks/
       env:
         BENCH_SETTINGS: '--benchmark_repetitions=10'
     - name: Upload results
       uses: actions/upload-artifact@v2
       with:
         name: ispc_llvm10_linux_bench_results
-        path: ${GITHUB_WORKSPACE}/ispc-trunk-linux/benchmarks/out/*.json
+        path: ispc-trunk-linux/benchmarks/out/*.json
