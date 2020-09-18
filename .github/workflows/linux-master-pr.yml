@@ -96,3 +96,27 @@ jobs:
     - name: Clean self-hosted runner
       run: rm -rf ${GITHUB_WORKSPACE:?}/* ${HOME:?}/* 
       if: always()
+
+  calcite:
+    needs: benchmarks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download benchmarks results
+        uses: actions/download-artifact@v2
+        with:
+          name: ispc_llvm10_linux_bench_results
+      - name: Upload bench datasets to calcite
+        working-directory: .calcite
+        run: |
+          npm ci
+          npx calcite upload calcite.config.js
+        env:
+          BENCH_OUTPUT_FILES: ${{github.workspace}}
+          CALCITE_TOKEN: ${{ secrets.CALCITE_TOKEN }}
+      - name: Trigger calcite workflow
+        if: github.event_name == 'pull_request' && success()
+        working-directory: .calcite
+        run: npx calcite trigger $(git cat-file -p HEAD | awk 'NR > 1 {if(/^parent/){print $2;}{exit}}') -tt pullrequest
+        env:
+          CALCITE_TOKEN: ${{ secrets.CALCITE_TOKEN }}
