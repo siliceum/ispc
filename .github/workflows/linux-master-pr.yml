@@ -74,6 +74,9 @@ jobs:
         echo "::set-env name=ISPC_HOME::${GITHUB_WORKSPACE}"
     - name: Check environment
       run: cat /proc/cpuinfo
+    - name: Tune system for benchmarking
+      run: curl http://$StabilizerServer:7373/acquire
+      if: always()
     - name: Running benchmarks
       run: |
         mkdir out
@@ -82,6 +85,9 @@ jobs:
       working-directory: ispc-trunk-linux/benchmarks/
       env:
         BENCH_SETTINGS: '--benchmark_repetitions=10'
+    - name: Reset system performance
+      run: curl http://$StabilizerServer:7373/release
+      if: always()
     - name: Upload results
       uses: actions/upload-artifact@v2
       with:
