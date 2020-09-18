@@ -79,7 +79,7 @@ jobs:
       if: always()
     - name: Running benchmarks
       run: |
-        mkdir out
+        mkdir -p out
         export LD_LIBRARY_PATH=../lib
         for exec in $(find . -type f -perm -u+x); do $exec --benchmark_out=out/$(basename $exec).json $BENCH_SETTINGS ; done
       working-directory: ispc-trunk-linux/benchmarks/
@@ -93,3 +93,6 @@ jobs:
       with:
         name: ispc_llvm10_linux_bench_results
         path: ispc-trunk-linux/benchmarks/out/*.json
+    - name: Clean self-hosted runner
+      run: rm -rf ${GITHUB_WORKSPACE:?}/* ${HOME:?}/* 
+      if: always()
