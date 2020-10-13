@@ -2,7 +2,7 @@ name: Linux benchmark tests / LLVM 10.0
 
 on:
   pull_request:
-    branches: ['master']
+    branches: ['master', 'test_bench']
   push:
     branches:
       - 'master'
