@@ -63,7 +63,7 @@ jobs:
 
   benchmarks:
     continue-on-error: true
-    runs-on: [self-hosted, linux, bench]
+    runs-on: [self-hosted, linux, bench, v2.278.0]
     needs: linux-build
     steps:
     - name: Download package
@@ -102,6 +102,7 @@ jobs:
       if: always()
 
   calcite:
+    if: false
     continue-on-error: true
     needs: benchmarks
     runs-on: ubuntu-latest
